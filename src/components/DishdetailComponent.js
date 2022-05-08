@@ -5,6 +5,7 @@ import { Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb,
 import { Control, LocalForm, Errors } from 'react-redux-form';
 import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl';
+import { FadeTransform, Fade, Stagger } from 'react-animation-components';
 
 
 const minLength = (len) => (val) => val && (val.length >= len);
@@ -119,13 +120,19 @@ function RenderDish( {dish, isLoading, errMess} )  {
   }
   else if(dish != null) {
       return (
-         <Card>
-            <CardImg top src={baseUrl + dish.image} alt={dish.name}/>
-            <CardBody>
-               <CardTitle>{dish.name}</CardTitle>
-               <CardText>{dish.description}</CardText>
-            </CardBody>
-         </Card>
+         <FadeTransform
+            in
+            transformProps={{
+               exitTransform: 'scale(0.5) translateY(-50%)'
+            }}>
+            <Card>
+               <CardImg top src={baseUrl + dish.image} alt={dish.name}/>
+               <CardBody>
+                  <CardTitle>{dish.name}</CardTitle>
+                  <CardText>{dish.description}</CardText>
+               </CardBody>
+            </Card>
+         </FadeTransform>
       );
    }
    return (<div></div>);
@@ -135,17 +142,21 @@ function RenderComments( {comments, postComment, dishId}) {
    if(comments && comments.length) {
       const list = comments.map(item=> {
          return (
+            <Fade in>
             <li key={item.id}>
                <p>{item.comment}</p>
                <p>-- {item.author} , {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(item.date)))}</p>
             </li>
+            </Fade>
          )
       });
       return (
          <div>
             <h4>Comments</h4>
             <ul className="list-unstyled">
+               <Stagger in>
                { list }
+               </Stagger>
             </ul>
             <CommentForm dishId={dishId} postComment={postComment}></CommentForm>
          </div>
